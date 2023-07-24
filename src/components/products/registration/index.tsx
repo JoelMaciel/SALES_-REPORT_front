@@ -1,11 +1,12 @@
+import { Input } from "components/common";
 import { Layout } from "components/layout";
 import { useState } from "react";
 
 export const RegisterProducts: React.FC = () => {
-  const [sku, setSku] = useState("");
-  const [price, setPrice] = useState("");
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
+  const [sku, setSku] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
 
   const submit = () => {
     const product = { sku, price, name, description };
@@ -15,51 +16,33 @@ export const RegisterProducts: React.FC = () => {
   return (
     <Layout title="Register Products">
       <div className="columns">
-        <div className="field is-half column ">
-          <label htmlFor="inputSKU" className="label">
-            SKU: *
-          </label>
-          <div className="control">
-            <input
-              id="inputSKU"
-              value={sku}
-              onChange={(event) => setSku(event.target.value)}
-              className="input"
-              placeholder="Enter product SKU"
-            />
-          </div>
-        </div>
-        <div className="field is-half column">
-          <label htmlFor="inputPrice" className="label">
-            Price: *
-          </label>
-          <div className="control">
-            <input
-              id="inputPrice"
-              value={price}
-              onChange={(event) => setPrice(event.target.value)}
-              className="input"
-              placeholder="Enter the product price "
-            />
-          </div>
-        </div>
+        <Input
+          label="  SKU: *"
+          columnClasses="is-half "
+          value={sku}
+          onChange={setSku}
+          id="inputSKU"
+          placeholder="Enter product SKU"
+        />
+        <Input
+          label="  Price: *"
+          value={price}
+          columnClasses="is-half "
+          onChange={setPrice}
+          id="inputPrice"
+          placeholder="Enter the product price "
+        />
       </div>
 
       <div className="columns">
-        <div className="field is-full column">
-          <label htmlFor="inputName" className="label">
-            Name: *
-          </label>
-          <div className="control">
-            <input
-              id="inputName"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              className="input"
-              placeholder="Enter product name "
-            />
-          </div>
-        </div>
+        <Input
+          label="  Name: *"
+          value={name}
+          columnClasses="is-full "
+          onChange={setName}
+          id="inputName"
+          placeholder="Enter product name "
+        />
       </div>
 
       <div className="columns">

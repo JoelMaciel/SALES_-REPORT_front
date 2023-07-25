@@ -1,3 +1,5 @@
+import { Product } from "app/models/products";
+import { useProductService } from "app/services/product.service";
 import { Input } from "components/common";
 import { Layout } from "components/layout";
 import { useState } from "react";
@@ -7,10 +9,18 @@ export const RegisterProducts: React.FC = () => {
   const [price, setPrice] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const service = useProductService();
 
   const submit = () => {
-    const product = { sku, price, name, description };
-    console.log(product);
+    const product: Product = {
+      sku,
+      price: parseFloat(price),
+      name,
+      description,
+    };
+    service
+      .save(product)
+      .then((productResponse) => console.log(productResponse));
   };
 
   return (

@@ -9,6 +9,8 @@ export const RegisterProducts: React.FC = () => {
   const [price, setPrice] = useState<string>("");
   const [name, setName] = useState<string>("");
   const [description, setDescription] = useState<string>("");
+  const [id, setId] = useState<string>("");
+  const [date, setDate] = useState<string>("");
   const service = useProductService();
 
   const submit = () => {
@@ -18,13 +20,32 @@ export const RegisterProducts: React.FC = () => {
       name,
       description,
     };
-    service
-      .save(product)
-      .then((productResponse) => console.log(productResponse));
+    service.save(product).then((productResponse) => {
+      setId(productResponse.id);
+      setDate(productResponse.creationDate);
+    });
   };
 
   return (
     <Layout title="Register Products">
+      {id && (
+        <div className="columns">
+          <Input
+            label="  Code *"
+            columnClasses="is-half "
+            value={id}
+            id="inputId"
+            disabled
+          />
+          <Input
+            label="  Date: *"
+            value={date}
+            columnClasses="is-half "
+            id="inputDate"
+            disabled
+          />
+        </div>
+      )}
       <div className="columns">
         <Input
           label="  SKU: *"

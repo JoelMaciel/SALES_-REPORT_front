@@ -4,6 +4,7 @@ import { Input } from "components/common";
 import { Layout } from "components/layout";
 import { useState } from "react";
 import { converterBigDecimal } from "app/util/money";
+import { Alert } from "components/common/message";
 
 export const RegisterProducts: React.FC = () => {
   const [sku, setSku] = useState<string>("");
@@ -12,6 +13,7 @@ export const RegisterProducts: React.FC = () => {
   const [description, setDescription] = useState<string>("");
   const [id, setId] = useState<string>("");
   const [date, setDate] = useState<string>("");
+  const [messages, setMessages] = useState<Array<Alert>>([]);
   const service = useProductService();
 
   const submit = () => {
@@ -24,19 +26,24 @@ export const RegisterProducts: React.FC = () => {
     };
 
     if (id) {
-      service
-        .update(product)
-        .then((response) => console.log("product updateding"));
+      service.update(product).then((response) => {
+        setMessages([
+          { typeColor: "success", text: "Successfully updated product" },
+        ]);
+      });
     } else {
       service.save(product).then((productResponse) => {
         setId(productResponse.id);
         setDate(productResponse.creationDate);
+        setMessages([
+          { typeColor: "success", text: "Successfully saved product" },
+        ]);
       });
     }
   };
 
   return (
-    <Layout title="Register Products">
+    <Layout title="Register Products" messagens={messages}>
       {id && (
         <div className="columns">
           <Input

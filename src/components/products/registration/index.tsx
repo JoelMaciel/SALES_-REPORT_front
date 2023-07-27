@@ -5,6 +5,35 @@ import { Layout } from "components/layout";
 import { useState } from "react";
 import { converterBigDecimal } from "app/util/money";
 import { Alert } from "components/common/message";
+import * as yup from "yup";
+
+const msgFielRequired = " is required";
+
+interface FormErros {
+  sku?: string;
+  name?: string;
+  price?: string;
+  description?: string;
+}
+
+const validationSchema = yup.object().shape({
+  sku: yup
+    .string()
+    .trim()
+    .required("Sku" + msgFielRequired),
+  name: yup
+    .string()
+    .trim()
+    .required("Name" + msgFielRequired),
+  description: yup
+    .string()
+    .trim()
+    .required("Description" + msgFielRequired),
+  price: yup
+    .number()
+    .required()
+    .moreThan(0, "Price must be greater than 0.00 (Zero)"),
+});
 
 export const RegisterProducts: React.FC = () => {
   const [sku, setSku] = useState<string>("");
@@ -14,6 +43,7 @@ export const RegisterProducts: React.FC = () => {
   const [id, setId] = useState<string>("");
   const [date, setDate] = useState<string>("");
   const [messages, setMessages] = useState<Array<Alert>>([]);
+  const [erros, setErros] = useState<FormErros>({});
   const service = useProductService();
 
   const submit = () => {
@@ -25,21 +55,34 @@ export const RegisterProducts: React.FC = () => {
       description,
     };
 
-    if (id) {
-      service.update(product).then((response) => {
-        setMessages([
-          { typeColor: "success", text: "Successfully updated product" },
-        ]);
+    validationSchema
+      .validate(product)
+      .then((obj) => {
+        setErros({});
+        if (id) {
+          service.update(product).then((response) => {
+            setMessages([
+              { typeColor: "success", text: "Successfully updated product" },
+            ]);
+          });
+        } else {
+          service.save(product).then((productResponse) => {
+            setId(productResponse.id);
+            setDate(productResponse.creationDate);
+            setMessages([
+              { typeColor: "success", text: "Successfully saved product" },
+            ]);
+          });
+        }
+      })
+      .catch((err) => {
+        const field = err.path;
+        const message = err.message;
+
+        setErros({
+          [field]: message,
+        });
       });
-    } else {
-      service.save(product).then((productResponse) => {
-        setId(productResponse.id);
-        setDate(productResponse.creationDate);
-        setMessages([
-          { typeColor: "success", text: "Successfully saved product" },
-        ]);
-      });
-    }
   };
 
   return (
@@ -70,6 +113,7 @@ export const RegisterProducts: React.FC = () => {
           onChange={setSku}
           id="inputSKU"
           placeholder="Enter product SKU"
+          error={erros.sku}
         />
         <Input
           label="  Price: *"
@@ -80,6 +124,7 @@ export const RegisterProducts: React.FC = () => {
           onChange={setPrice}
           id="inputPrice"
           placeholder="Enter the product price "
+          error={erros.price}
         />
       </div>
 
@@ -91,6 +136,7 @@ export const RegisterProducts: React.FC = () => {
           onChange={setName}
           id="inputName"
           placeholder="Enter product name "
+          error={erros.name}
         />
       </div>
 
@@ -107,6 +153,9 @@ export const RegisterProducts: React.FC = () => {
               className="textarea"
               placeholder="Enter detailed product description "
             />
+            {erros.description && (
+              <p className="help is-danger"> {erros.description}</p>
+            )}
           </div>
         </div>
       </div>

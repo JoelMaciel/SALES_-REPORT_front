@@ -14,7 +14,7 @@ export const Message: React.FC<MessageProps> = ({ typeColor, field, text }) => {
   return (
     <article className={`message is-${typeColor}`}>
       <div className="message-body">
-        {field && `${field} :`} {text}
+        {field && `${field}`} {text}
       </div>
     </article>
   );

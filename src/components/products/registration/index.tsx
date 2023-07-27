@@ -15,15 +15,23 @@ export const RegisterProducts: React.FC = () => {
 
   const submit = () => {
     const product: Product = {
+      id,
       sku,
       price: parseFloat(price),
       name,
       description,
     };
-    service.save(product).then((productResponse) => {
-      setId(productResponse.id);
-      setDate(productResponse.creationDate);
-    });
+
+    if (id) {
+      service
+        .update(product)
+        .then((response) => console.log("product updateding"));
+    } else {
+      service.save(product).then((productResponse) => {
+        setId(productResponse.id);
+        setDate(productResponse.creationDate);
+      });
+    }
   };
 
   return (
@@ -96,7 +104,7 @@ export const RegisterProducts: React.FC = () => {
       <div className="field is-grouped">
         <div className="control">
           <button onClick={submit} className="button is-success">
-            Save
+            {id ? "Update" : "Save"}
           </button>
         </div>
         <div className="control">
